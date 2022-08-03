@@ -1,3 +1,5 @@
+Install all required packages
+
 0) First copy video in .mp4 format inside root folder
 
 This project consists of two scripts
