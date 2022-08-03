@@ -1,6 +1,7 @@
 This project consists of two scripts
 
 1) save_robot.py (run: python3 save_robot.py)
+    Before running set diamter line: r on line 31 to some desired value for example 36
     This script is run first and its purpose is to find the gel robot, diameter for circle where to find the hair and R, G, B values for hair
 
 2) Then all these values need to be passed to main.py and its output is graph of angular velocity for the gel robot    
