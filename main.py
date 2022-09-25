@@ -7,22 +7,19 @@ import matplotlib
 import matplotlib.pyplot
 import tkinter
 from tkinter import filedialog
-import colorsys
 
 
-def find_hair(image, p_list, r, g, b):
+def find_hair(image, p_list, r, g, b) -> int:
     global count
     angle_deg = 0
-    # TODO: add sweeping from previous angle
     for c in p_list:
         angle_deg = angle_deg + 1
         blue = image[int(c[0]), int(c[1]), 0]
         green = image[int(c[0]), int(c[1]), 1]
         red = image[int(c[0]), int(c[1]), 2]
         
-        print(blue, green, red)
         # these values are in HSV code, it would be best to modifie them before starting with the video
-        if r*0.90 < red < 1.1*r and b*0.90 < blue < 1.10*b and g*0.90 < green < 1.10*g:
+        if r*0.97 < red < 1.03*r and b*0.97 < blue < 1.03*b and g*0.97 < green < 1.03*g:
             return int(angle_deg)
 
 
@@ -30,6 +27,8 @@ def calculate_angular_velocity(current_angle, old_angle, frequency, frames_skipp
     # subtract cur and old angle to get difference = degrees, then divide by time passed
     # result is in degree/s
     # here i know that i have passed one rotation
+    if old_angle is None:
+        old_angle = current_angle
     if current_angle < old_angle:
         angle_dif = 360 - old_angle + current_angle
     elif current_angle > old_angle:
@@ -64,8 +63,6 @@ def main(frame_rate, skipped, x, y, diameter, red, green, blue):
     success, frame = vs.read()
     start = time.time()
     count = 0
-    frameDelta = None
-    starting_i = 0
     # two dimensional array with coordinates for pixels where to detect hair
     pixels_list = []
     FREQUENCY = int(frame_rate)
@@ -95,19 +92,17 @@ def main(frame_rate, skipped, x, y, diameter, red, green, blue):
             hair_angle = find_hair(frame, pixels_list, float(red), float(green), float(blue))
             
             if hair_angle is not None:
-                print(hair_angle)
                 if hair_angle != previous_angle:
                     # here i know that some rotation was done
                     velocity = calculate_angular_velocity(hair_angle, previous_angle, FREQUENCY, FRAMES_SKIPPED)
-                    if velocity < 1:
+                    if velocity > 0 :
                         previous_angle = hair_angle
                         graph_data_list_x.append(count)
                         graph_data_list_y.append(velocity)
-                        print(f"Calculated angular velocity in degree/s {velocity}")
-                    else:
-                        previous_angle = hair_angle
-                        print(f"Calculated angular velocity in degree/s {velocity}")
-
+                        #print(f"Calculated angular velocity in degree/s {velocity}")
+                    # else:
+                    #     previous_angle = hair_angle
+                    #     #print(f"Calculated angular velocity in degree/s {velocity}")
                         continue
         if count % 1000 == 0 and count != 0:
             print(f'-------------{length-count}--------------')
@@ -116,7 +111,7 @@ def main(frame_rate, skipped, x, y, diameter, red, green, blue):
 
     # GRAPH creation
     print(f'-------------{count}--------------')
-    print(f'Finished working.... Time elapsed:{time.time() - start}')
+    print(f'\n\033[1mFinished working.... Time elapsed: {time.time() - start} \033[0m')
     matplotlib.pyplot.plot(graph_data_list_x, graph_data_list_y)
     matplotlib.pyplot.ylabel('Angular velocity [degrees/s]')
     matplotlib.pyplot.xlabel('Frames elapsed')

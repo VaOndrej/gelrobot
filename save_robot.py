@@ -20,12 +20,19 @@ def save_file():
 # function to display the coordinates of
 # of the points clicked on the image
 def click_event(event, x, y, flags, params):
+    # checking for right mouse clicks    
+    if event==cv2.EVENT_MBUTTONDBLCLK:
+        b = img[y, x, 0]
+        g = img[y, x, 1]
+        r = img[y, x, 2]
+        print("\n\033[1mChosen color: \033[0m")
+        print(f"--red={r} --green={g} --blue={b}")
+        
     # checking for left mouse clicks
-    if event == cv2.EVENT_LBUTTONDOWN:
+    if event == cv2.EVENT_LBUTTONDOWN :
  
         # displaying the coordinates
         # on the Shell
-
         i = 0
         # Change this value if needed
         r = 36
@@ -36,21 +43,13 @@ def click_event(event, x, y, flags, params):
             x1 = r * math.cos(angle * PI / 180)
             y1 = r * math.sin(angle * PI / 180)
             # this should be moved and checked against chaned.jpg.
-            img[int(y + y1), int(x + x1)] = i, 0, 0
+            img[int(y + y1), int(x + x1)] = b, g, r
             i = i + 1    
             
-        print(f"X axis robot coordinate: {x}")
-        print(f"Y axis robot coordinate: {y}")
-        print(f"Chosen diameter for circle: {r}")
+        print("\n\033[1mChosen parameters for robot: \033[0m")
+        print(f"--x {x} --y {y} --diameter {r}")
         cv2.imshow('image', img)
  
- 
-    # checking for right mouse clicks    
-    if event==cv2.EVENT_MBUTTONDBLCLK:
-        b = img[y, x, 0]
-        g = img[y, x, 1]
-        r = img[y, x, 2]
-        print(f"R={r}, G={g}, B={b}")
     
  
 if __name__=="__main__":
