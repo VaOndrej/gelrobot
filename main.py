@@ -17,9 +17,8 @@ def find_hair(image, p_list, r, g, b) -> int:
         blue = image[int(c[0]), int(c[1]), 0]
         green = image[int(c[0]), int(c[1]), 1]
         red = image[int(c[0]), int(c[1]), 2]
-        
         # these values are in HSV code, it would be best to modifie them before starting with the video
-        if r*0.97 < red < 1.03*r and b*0.97 < blue < 1.03*b and g*0.97 < green < 1.03*g:
+        if r*0.90 < red < 1.10*r and b*0.90 < blue < 1.10*b and g*0.90 < green < 1.10*g:
             return int(angle_deg)
 
 
@@ -27,19 +26,21 @@ def calculate_angular_velocity(current_angle, old_angle, frequency, frames_skipp
     # subtract cur and old angle to get difference = degrees, then divide by time passed
     # result is in degree/s
     # here i know that i have passed one rotation
+    angular_velocity = 0
+    angle_dif = 0
     if old_angle is None:
-        old_angle = current_angle
-    if current_angle < old_angle:
+        return angular_velocity
+    if current_angle < old_angle and current_angle < 20:
         angle_dif = 360 - old_angle + current_angle
     elif current_angle > old_angle:
         angle_dif = current_angle - old_angle
-    else:
-        angle_dif = 0
     # print(f"Angle dif {angle_dif}")
-    # print(angle_dif)
-    if angle_dif > 350:
+    if angle_dif > 340:
         angle_dif = 360 - angle_dif
-    angular_velocity = angle_dif / (frequency * frames_skipped)
+    if angle_dif > 0 and angle_dif < 20:
+        angular_velocity = angle_dif / (frequency * frames_skipped)
+        print(f"Angle dif: {angular_velocity} Old angle: {old_angle}, Current_angle  {current_angle}")
+
     return angular_velocity
 
 
@@ -95,18 +96,16 @@ def main(frame_rate, skipped, x, y, diameter, red, green, blue):
                 if hair_angle != previous_angle:
                     # here i know that some rotation was done
                     velocity = calculate_angular_velocity(hair_angle, previous_angle, FREQUENCY, FRAMES_SKIPPED)
-                    if velocity > 0 :
+                    if velocity > 0:
                         previous_angle = hair_angle
                         graph_data_list_x.append(count)
                         graph_data_list_y.append(velocity)
-                        #print(f"Calculated angular velocity in degree/s {velocity}")
-                    # else:
-                    #     previous_angle = hair_angle
-                    #     #print(f"Calculated angular velocity in degree/s {velocity}")
                         continue
+                
         if count % 1000 == 0 and count != 0:
             print(f'-------------{length-count}--------------')
-
+        if length-count < 250000:
+            break
         count = count + 1
 
     # GRAPH creation
