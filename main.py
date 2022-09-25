@@ -17,7 +17,7 @@ def find_hair(image, p_list, r, g, b) -> int:
         blue = image[int(c[0]), int(c[1]), 0]
         green = image[int(c[0]), int(c[1]), 1]
         red = image[int(c[0]), int(c[1]), 2]
-        # these values are in HSV code, it would be best to modifie them before starting with the video
+        # Change these values to fine tune hair color against background color, values are in RGB code
         if r*0.90 < red < 1.10*r and b*0.90 < blue < 1.10*b and g*0.90 < green < 1.10*g:
             return int(angle_deg)
 
@@ -34,12 +34,12 @@ def calculate_angular_velocity(current_angle, old_angle, frequency, frames_skipp
         angle_dif = 360 - old_angle + current_angle
     elif current_angle > old_angle:
         angle_dif = current_angle - old_angle
-    # print(f"Angle dif {angle_dif}")
     if angle_dif > 340:
         angle_dif = 360 - angle_dif
     if angle_dif > 0 and angle_dif < 20:
         angular_velocity = angle_dif / (frequency * frames_skipped)
-        print(f"Angle dif: {angular_velocity} Old angle: {old_angle}, Current_angle  {current_angle}")
+        # These values should be printed a lot. It indicates that hair was correctly found
+        #click.echo(f"Angle dif: {angular_velocity} Old angle: {old_angle}, Current_angle  {current_angle}")
 
     return angular_velocity
 
@@ -103,14 +103,14 @@ def main(frame_rate, skipped, x, y, diameter, red, green, blue):
                         continue
                 
         if count % 1000 == 0 and count != 0:
-            print(f'-------------{length-count}--------------')
-        if length-count < 250000:
-            break
+            click.echo(f'-------------{length-count}--------------')
+        # if length-count < 250000:
+        #     break
         count = count + 1
 
     # GRAPH creation
-    print(f'-------------{count}--------------')
-    print(f'\n\033[1mFinished working.... Time elapsed: {time.time() - start} \033[0m')
+    click.echo(f'-------------{count}--------------')
+    click.echo(f'\n\033[1mFinished working.... Time elapsed: {time.time() - start} \033[0m')
     matplotlib.pyplot.plot(graph_data_list_x, graph_data_list_y)
     matplotlib.pyplot.ylabel('Angular velocity [degrees/s]')
     matplotlib.pyplot.xlabel('Frames elapsed')

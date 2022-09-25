@@ -2,6 +2,7 @@ import tkinter
 from tkinter import filedialog
 import cv2
 import math
+import click
 
 def save_file():
     root = tkinter.Tk()
@@ -25,8 +26,8 @@ def click_event(event, x, y, flags, params):
         b = img[y, x, 0]
         g = img[y, x, 1]
         r = img[y, x, 2]
-        print("\n\033[1mChosen color: \033[0m")
-        print(f"--red={r} --green={g} --blue={b}")
+        click.echo("\n\033[1mChosen color: \033[0m")
+        click.echo(f"--red={r} --green={g} --blue={b}")
         
     # checking for left mouse clicks
     if event == cv2.EVENT_LBUTTONDOWN :
@@ -46,17 +47,17 @@ def click_event(event, x, y, flags, params):
             img[int(y + y1), int(x + x1)] = b, g, r
             i = i + 1    
             
-        print("\n\033[1mChosen parameters for robot: \033[0m")
-        print(f"--x {x} --y {y} --diameter {r}")
+        click.echo("\n\033[1mChosen parameters for robot: \033[0m")
+        click.echo(f"--x {x} --y {y} --diameter {r}")
         cv2.imshow('image', img)
  
     
  
 if __name__=="__main__":
-    print("Please choose video file")
+    click.echo("Please choose video file")
     save_file()    
-    print("Saved robot file for further processing named -> robot.jpg")
-    print("In this step please choose middle of the gel robot")
+    click.echo("Saved robot file for further processing named -> robot.jpg")
+    click.echo("In this step please choose middle of the gel robot")
         # reading the image
     img = cv2.imread('robot.jpg', 1)
  
@@ -68,7 +69,7 @@ if __name__=="__main__":
     # and calling the click_event() function
     cv2.setMouseCallback('image', click_event)
     
-    print("To exit press any key")
+    click.echo("To exit press any key")
     # wait for a key to be pressed to exit
     cv2.waitKey(0)
  
